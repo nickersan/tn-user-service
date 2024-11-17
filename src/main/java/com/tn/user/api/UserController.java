@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +33,7 @@ import com.tn.user.repository.UserRepository;
 @Slf4j
 @RestController
 @RequestMapping("/v1")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController
 {
   private static final QueryBuilder QUERY_BUILDER = new QueryBuilder(User.class);
