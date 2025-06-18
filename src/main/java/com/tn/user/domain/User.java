@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.experimental.FieldNameConstants;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -34,6 +37,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @EqualsAndHashCode
 @ToString
+@FieldNameConstants
 public class User
 {
   @Id
@@ -45,14 +49,18 @@ public class User
 
   @Column(nullable = false, unique = true)
   @JsonProperty
+  @Email
+  @NotNull
   private String email;
 
   @Column(name = "first_name", nullable = false, length = 100)
   @JsonProperty
+  @NotNull
   private String firstName;
 
   @Column(name = "last_name", nullable = false, length = 100)
   @JsonProperty
+  @NotNull
   private String lastName;
 
   @Column(name = "token_subject", length = 100)

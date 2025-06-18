@@ -1,6 +1,7 @@
 package com.tn.user.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,11 +11,11 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -45,7 +47,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnAllUsers()
   {
-    when(userRepository.findAll()).thenReturn(List.of(USER));
+    when(userRepository.findAll(Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1", GET, null, USER_LIST);
 
@@ -77,7 +79,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForIdWithParam()
   {
-    when(userRepository.findWhere("id=" + USER.id())).thenReturn(List.of(USER));
+    when(userRepository.findAllById(Set.of(USER.id()))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?id={userId}", GET, null, USER_LIST, USER.id());
 
@@ -88,7 +90,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForIdWithQuery()
   {
-    when(userRepository.findWhere("id=" + USER.id())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("id=" + USER.id(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=id={userId}", GET, null, USER_LIST, USER.id());
 
@@ -99,7 +101,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForEmailWithParam()
   {
-    when(userRepository.findWhere("email=" + USER.email())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("email=" + USER.email(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?email={userEmail}", GET, null, USER_LIST, USER.email());
 
@@ -110,7 +112,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForEmailWithQuery()
   {
-    when(userRepository.findWhere("email=" + USER.email())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("email=" + USER.email(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=email={userEmail}", GET, null, USER_LIST, USER.email());
 
@@ -121,7 +123,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForFirstNameWithParam()
   {
-    when(userRepository.findWhere("firstName=" + USER.firstName())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("firstName=" + USER.firstName(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?firstName={userFirstName}", GET, null, USER_LIST, USER.firstName());
 
@@ -132,7 +134,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForFirstNameWithQuery()
   {
-    when(userRepository.findWhere("firstName=" + USER.firstName())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("firstName=" + USER.firstName(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=firstName={userFirstName}", GET, null, USER_LIST, USER.firstName());
 
@@ -143,7 +145,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForLastNameWithParam()
   {
-    when(userRepository.findWhere("lastName=" + USER.lastName())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("lastName=" + USER.lastName(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?lastName={userLastName}", GET, null, USER_LIST, USER.lastName());
 
@@ -154,7 +156,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForLastNameWithQuery()
   {
-    when(userRepository.findWhere("lastName=" + USER.lastName())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("lastName=" + USER.lastName(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=lastName={userLastName}", GET, null, USER_LIST, USER.lastName());
 
@@ -165,7 +167,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForTokenSubjectWithParam()
   {
-    when(userRepository.findWhere("tokenSubject=" + USER.tokenSubject())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("tokenSubject=" + USER.tokenSubject(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?tokenSubject={userTokenSubject}", GET, null, USER_LIST, USER.tokenSubject());
 
@@ -176,7 +178,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForTokenSubjectWithQuery()
   {
-    when(userRepository.findWhere("tokenSubject=" + USER.tokenSubject())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("tokenSubject=" + USER.tokenSubject(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=tokenSubject={userTokenSubject}", GET, null, USER_LIST, USER.tokenSubject());
 
@@ -187,7 +189,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForCreatedWithParam()
   {
-    when(userRepository.findWhere("created=" + USER.created())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("created=" + USER.created(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?created={userCreated}", GET, null, USER_LIST, USER.created());
 
@@ -198,7 +200,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnUserForCreatedWithQuery()
   {
-    when(userRepository.findWhere("created=" + USER.created())).thenReturn(List.of(USER));
+    when(userRepository.findWhere("created=" + USER.created(), Sort.by(Sort.Direction.ASC, User.Fields.id))).thenReturn(List.of(USER));
 
     ResponseEntity<List<User>> response = testRestTemplate.exchange("/v1?q=created={userCreated}", GET, null, USER_LIST, USER.created());
 
@@ -225,7 +227,7 @@ class UserControllerIntegrationTest
   @Test
   void shouldReturnInternalServerErrorForGetOnUncaughtException()
   {
-    when(userRepository.findWhere("email=X")).thenThrow(new RuntimeException());
+    when(userRepository.findWhere("email=X", Sort.by(Sort.Direction.ASC, User.Fields.id))).thenThrow(new RuntimeException());
 
     ResponseEntity<Void> response = testRestTemplate.exchange("/v1?email=X", GET, null, Void.class);
 
@@ -278,33 +280,26 @@ class UserControllerIntegrationTest
   @Test
   void shouldSaveUserWithPut()
   {
-    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(USER));
-    when(userRepository.save(USER)).thenReturn(USER);
+    when(userRepository.save(UNSAVED_USER)).thenReturn(USER);
 
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1/{userId}", PUT, new HttpEntity<>(UNSAVED_USER), User.class, USER_ID);
+    ResponseEntity<User> response = testRestTemplate.exchange("/v1", PUT, new HttpEntity<>(UNSAVED_USER), User.class, USER_ID);
 
     assertTrue(response.getStatusCode().is2xxSuccessful());
+    assertNotNull(response.getBody());
     assertEquals(USER, response.getBody());
-  }
-
-  @Test
-  void shouldReturnNotFoundWithPutForUnknownIds()
-  {
-    var unknownUserId = USER_ID + 1;
-
-    when(userRepository.findById(unknownUserId)).thenReturn(Optional.empty());
-
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1/{userId}", PUT, new HttpEntity<>(USER), User.class, unknownUserId);
-
-    assertEquals(NOT_FOUND, response.getStatusCode());
   }
 
   @Test
   void shouldDeleteUser()
   {
-    ResponseEntity<Void> response = testRestTemplate.exchange("/v1/{userId}", DELETE, null, Void.class, USER_ID);
+    when(userRepository.findById(USER_ID)).thenReturn(Optional.of(USER));
+
+    ResponseEntity<User> response = testRestTemplate.exchange("/v1/{userId}", DELETE, null, User.class, USER_ID);
 
     assertTrue(response.getStatusCode().is2xxSuccessful());
-    verify(userRepository).deleteById(USER_ID);
+    assertNotNull(response.getBody());
+    assertEquals(USER, response.getBody());
+
+    verify(userRepository).delete(USER);
   }
 }
