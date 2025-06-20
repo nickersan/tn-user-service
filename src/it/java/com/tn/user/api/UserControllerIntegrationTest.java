@@ -20,12 +20,12 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.tn.user.domain.User;
 import com.tn.user.repository.UserRepository;
@@ -38,7 +38,7 @@ class UserControllerIntegrationTest
   private static final User USER = new User(USER_ID, "test.tester@testing.com", "Test", "Tester", "T1", LocalDateTime.now());
   private static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
 
-  @MockBean
+  @MockitoBean
   UserRepository userRepository;
 
   @Autowired

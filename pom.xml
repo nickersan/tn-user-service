@@ -22,7 +22,7 @@
 
   <properties>
 
-    <contract-producer.base-test-class>com.tn.user.AbstractContractTest</contract-producer.base-test-class>
+    <contract-producer.base-class.package>com.tn.user.api</contract-producer.base-class.package>
 
   </properties>
 
@@ -75,41 +75,35 @@
       <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-    <!--    <dependency>-->
-<!--      <groupId>org.projectlombok</groupId>-->
-<!--      <artifactId>lombok</artifactId>-->
-<!--    </dependency>-->
+    <!-- currently no fix for commons-collections vulnerability - 2023-09-15 -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-stub-runner</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-<!--    &lt;!&ndash; currently no fix for commons-collections vulnerability - 2023-09-15 &ndash;&gt;-->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-contract-wiremock</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+      <scope>test</scope>
+    </dependency>
+
 <!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-contract-stub-runner</artifactId>-->
+<!--      <groupId>io.rest-assured</groupId>-->
+<!--      <artifactId>spring-mock-mvc</artifactId>-->
+<!--      <version>5.2.1</version>-->
 <!--      <scope>test</scope>-->
-<!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-contract-wiremock</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
-
-<!--    &lt;!&ndash; currently no fix for commons-collections vulnerability - 2023-09-15 &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-starter-contract-verifier</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.cloud</groupId>-->
-<!--      <artifactId>spring-cloud-starter-openfeign</artifactId>-->
-<!--    </dependency>-->
-
-<!--    &lt;!&ndash; fixes vulnerability introduced transitively by spring-boot-starter-actuator &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>org.yaml</groupId>-->
-<!--      <artifactId>snakeyaml</artifactId>-->
 <!--    </dependency>-->
 
   </dependencies>

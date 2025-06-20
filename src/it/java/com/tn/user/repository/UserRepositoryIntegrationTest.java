@@ -15,15 +15,17 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 
+import com.tn.lang.Iterables;
 import com.tn.user.domain.User;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserRepositoryIntegrationTest
 {
   private static final User USER = User.builder()
@@ -36,45 +38,7 @@ class UserRepositoryIntegrationTest
   @Autowired
   private UserRepository userRepository;
 
-  @Test
-  @Order(1)
-  @Rollback(false)
-  void shouldSave()
-  {
-    var user = userRepository.save(USER);
-    assertUser(USER, user);
-    assertNotNull(user.id());
-//    assertNotNull(user.created());
-  }
-
-  @Test
-  @Order(2)
-  void shouldRead()
-  {
-    var user = StreamSupport.stream(userRepository.findAll().spliterator(), false).findFirst().orElseThrow(AssertionFailedError::new);
-    assertUser(USER, user);
-    assertNotNull(user.created());
-  }
-
-  @Test
-  @Order(3)
-  void shouldReadById()
-  {
-    var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
-    assertUser(USER, user);
-    assertNotNull(user.created());
-  }
-
-  @Test
-  @Order(4)
-  void shouldDelete()
-  {
-    var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
-    userRepository.delete(user);
-    assertTrue(userRepository.findById(1L).isEmpty());
-  }
-
-  private static void assertUser(User expected, User actual)
+  private void assertUser(User expected, User actual)
   {
     assertEquals(expected.email(), actual.email());
     assertEquals(expected.firstName(), actual.firstName());
@@ -83,6 +47,54 @@ class UserRepositoryIntegrationTest
   }
 
   @Nested
+  @Isolated
+  @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+  @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+  class CrudTest
+  {
+    @Test
+    @Order(1)
+    @Rollback(false)
+    void shouldSave()
+    {
+      var user = userRepository.save(USER);
+      assertUser(USER, user);
+      assertNotNull(user.id());
+//    assertNotNull(user.created());
+    }
+
+    @Test
+    @Order(2)
+    void shouldRead()
+    {
+      var user = StreamSupport.stream(userRepository.findAll().spliterator(), false).findFirst().orElseThrow(AssertionFailedError::new);
+      assertUser(USER, user);
+      assertNotNull(user.created());
+    }
+
+    @Test
+    @Order(3)
+    void
+    shouldReadById()
+    {
+      var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      assertUser(USER, user);
+      assertNotNull(user.created());
+    }
+
+    @Test
+    @Order(4)
+    void shouldDelete()
+    {
+      var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      userRepository.delete(user);
+      assertTrue(userRepository.findById(1L).isEmpty());
+    }
+  }
+
+  @Nested
+  @Isolated
+  @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
   class QueryTest
   {
     private static final User USER_2 = User.builder()
@@ -95,7 +107,7 @@ class UserRepositoryIntegrationTest
     @BeforeEach
     void createUsers()
     {
-      userRepository.saveAll(List.of(USER, USER_2));
+      userRepository.saveAll(List.of(copy(USER), copy(USER_2)));
     }
 
     @AfterEach
@@ -126,14 +138,23 @@ class UserRepositoryIntegrationTest
     void shouldFindByTokenSubject()
     {
       assertWhere(expectedUser -> "tokenSubject = " + expectedUser.tokenSubject());
-
     }
 
     private void assertWhere(Function<User, String> queryProvider)
     {
-      var users = StreamSupport.stream(userRepository.findWhere(queryProvider.apply(USER_2)).spliterator(), false).toList();
+      var users = Iterables.asList(userRepository.findWhere(queryProvider.apply(USER_2)));
       assertEquals(1, users.size());
       assertUser(USER_2, users.getFirst());
+    }
+
+    private User copy(User user)
+    {
+      return User.builder()
+        .email(user.email())
+        .firstName(user.firstName())
+        .lastName(user.lastName())
+        .tokenSubject(user.tokenSubject())
+        .build();
     }
   }
 }
