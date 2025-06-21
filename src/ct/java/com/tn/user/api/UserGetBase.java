@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.tn.query.Mapper;
 import com.tn.query.java.Getter;
 import com.tn.service.data.api.DataApi;
 import com.tn.user.domain.User;
@@ -43,14 +44,19 @@ public abstract class UserGetBase extends Base
   {
     Getter<User> idGetter = Getter.longValue("id", User::id);
     Collection<Getter<User>> getters = List.of(
-      Getter.comparableValue("email", User::email),
-      Getter.comparableValue("firstName", User::firstName),
-      Getter.comparableValue("lastName", User::lastName),
-      Getter.comparableValue("tokenSubject", User::tokenSubject),
-      Getter.comparableValue("created", User::created)
+      Getter.comparableValue(User.Fields.email, User::email),
+      Getter.comparableValue(User.Fields.firstName, User::firstName),
+      Getter.comparableValue(User.Fields.lastName, User::lastName),
+      Getter.comparableValue(User.Fields.tokenSubject, User::tokenSubject),
+      Getter.comparableValue(User.Fields.created, User::created)
     );
 
-    initializeFindMethods(userRepository, idGetter, getters, USER_1, USER_2, USER_3);
+    Collection<Mapper> mappers = List.of(
+      Mapper.toLong(User.Fields.id),
+      Mapper.toLocalDateTime(User.Fields.created)
+    );
+
+    initializeFindMethods(userRepository, idGetter, getters, mappers, USER_1, USER_2, USER_3);
   }
 
   @AfterEach
