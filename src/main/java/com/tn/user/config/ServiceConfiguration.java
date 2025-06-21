@@ -29,7 +29,7 @@ class ServiceConfiguration
   }
 
   @Bean
-  DataRepository<Long, User> userDataRepository(UserRepository userRepository)
+  DataRepository<User, Long> userDataRepository(UserRepository userRepository)
   {
     return new DataRepositoryAdaptor<>(userRepository, FIELD_ID);
   }

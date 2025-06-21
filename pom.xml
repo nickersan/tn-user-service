@@ -29,9 +29,24 @@
   <dependencies>
 
     <dependency>
+      <groupId>com.tn.query</groupId>
+      <artifactId>tn-query-java</artifactId>
+      <version>0.0.01-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.tn.service.data</groupId>
       <artifactId>tn-data-service-jpa</artifactId>
       <version>0.0.01-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tn.service.data</groupId>
+      <artifactId>tn-data-service-jpa</artifactId>
+      <version>0.0.01-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
