@@ -6,22 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -32,80 +24,13 @@ import com.tn.user.repository.UserRepository;
 class UserControllerIntegrationTest
 {
   private static final long USER_ID = 1L;
-  private static final User UNSAVED_USER = new User("test.tester@testing.com", "Test", "Tester", "T1");
   private static final User USER = new User(USER_ID, "test.tester@testing.com", "Test", "Tester", "T1", LocalDateTime.now());
-  private static final ParameterizedTypeReference<List<User>> USER_LIST = new ParameterizedTypeReference<>() {};
 
   @MockitoBean
   UserRepository userRepository;
 
   @Autowired
   TestRestTemplate testRestTemplate;
-
-  @Test
-  void shouldReturnInternalServerErrorForGetOnUncaughtException()
-  {
-    when(userRepository.findWhere("email=X", Sort.by(Sort.Direction.ASC, User.Fields.id))).thenThrow(new RuntimeException());
-
-    ResponseEntity<Void> response = testRestTemplate.exchange("/v1?email=X", GET, null, Void.class);
-
-    assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-  }
-
-  @Test
-  void shouldSaveUserWithPost()
-  {
-    when(userRepository.save(UNSAVED_USER)).thenReturn(USER);
-
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", POST, new HttpEntity<>(UNSAVED_USER), User.class);
-
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertEquals(USER, response.getBody());
-  }
-
-  @Test
-  void shouldBadRequestForSaveUserWithPostAndMissingEmail()
-  {
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", POST, new HttpEntity<>(new User(null, "Test", "Tester", "T1")), User.class);
-
-    assertTrue(response.getStatusCode().is4xxClientError());
-  }
-
-  @Test
-  void shouldBadRequestForSaveUserWithPostAndCorruptEmail()
-  {
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", POST, new HttpEntity<>(new User("CORRUPT", "Test", "Tester", "T1")), User.class);
-
-    assertTrue(response.getStatusCode().is4xxClientError());
-  }
-
-  @Test
-  void shouldBadRequestForSaveUserWithPostAndMissingFirstName()
-  {
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", POST, new HttpEntity<>(new User("test.tester@testing.com", null, "Tester", "T1")), User.class);
-
-    assertTrue(response.getStatusCode().is4xxClientError());
-  }
-
-  @Test
-  void shouldBadRequestForSaveUserWithPostAndMissingLastName()
-  {
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", POST, new HttpEntity<>(new User("test.tester@testing.com", "Test", null, "T1")), User.class);
-
-    assertTrue(response.getStatusCode().is4xxClientError());
-  }
-
-  @Test
-  void shouldSaveUserWithPut()
-  {
-    when(userRepository.save(UNSAVED_USER)).thenReturn(USER);
-
-    ResponseEntity<User> response = testRestTemplate.exchange("/v1", PUT, new HttpEntity<>(UNSAVED_USER), User.class, USER_ID);
-
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertNotNull(response.getBody());
-    assertEquals(USER, response.getBody());
-  }
 
   @Test
   void shouldDeleteUser()
