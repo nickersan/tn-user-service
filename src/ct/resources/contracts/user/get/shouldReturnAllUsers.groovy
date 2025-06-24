@@ -20,9 +20,9 @@ Contract.make
     body(
       """
       [
-        {"id":1,"email":"one.first@mail.com","firstName":"One","lastName":"First","tokenSubject":"T1","created":"2025-06-20T17:31:01"},
-        {"id":2,"email":"two.second@mail.com","firstName":"Two","lastName":"Second","tokenSubject":"T2","created":"2025-06-20T17:32:02"},
-        {"id":3,"email":"three.third@mail.com","firstName":"Three","lastName":"Third","tokenSubject":"T3","created":"2025-06-20T17:33:03"}
+        {"id":1,"email":"one.first@mail.com","fullName":"One First","preferredName":"One","tokenSubject":"T1","created":"2025-06-20T17:31:01"},
+        {"id":2,"email":"two.second@mail.com","fullName":"Two Second","preferredName":"Two","tokenSubject":"T2","created":"2025-06-20T17:32:02"},
+        {"id":3,"email":"three.third@mail.com","fullName":"Three Third","preferredName":"Three","tokenSubject":"T3","created":"2025-06-20T17:33:03"}
       ]      
       """
     )

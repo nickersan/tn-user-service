@@ -2,7 +2,7 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make
 {
-  description "should not save users without email and return BAD REQUEST 400"
+  description "should not save users without preferredName and return BAD REQUEST 400"
 
   request
   {
@@ -16,7 +16,7 @@ Contract.make
       """
       [
         {"email":"one.first@mail.com","fullName":"One First","preferredName":"One","tokenSubject":"T1"},
-        {"fullName":"Two Second","preferredName":"Two","tokenSubject":"T2"},
+        {"email":"two.second@mail.com","fullName":"Two Second","tokenSubject":"T2"},
         {"email":"three.third@mail.com","fullName":"Three Third","preferredName":"Three","tokenSubject":"T3"}
       ]
       """
@@ -32,7 +32,7 @@ Contract.make
     }
     body(
       """
-      {"message":"Invalid body","detail":["email must not be null"]}                  
+      {"message":"Invalid body","detail":["preferredName must not be null"]}                  
       """
     )
   }

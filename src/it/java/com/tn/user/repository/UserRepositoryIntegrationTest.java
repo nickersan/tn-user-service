@@ -28,12 +28,7 @@ import com.tn.user.domain.User;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserRepositoryIntegrationTest
 {
-  private static final User USER = User.builder()
-    .email("test.tester@testing.com")
-    .firstName("Test")
-    .lastName("Tester")
-    .tokenSubject("TK1")
-    .build();
+  private static final User USER = new User("test.tester@testing.com", "Test Tester", "Test", "TK1");
 
   @Autowired
   private UserRepository userRepository;
@@ -41,8 +36,8 @@ class UserRepositoryIntegrationTest
   private void assertUser(User expected, User actual)
   {
     assertEquals(expected.email(), actual.email());
-    assertEquals(expected.firstName(), actual.firstName());
-    assertEquals(expected.lastName(), actual.lastName());
+    assertEquals(expected.fullName(), actual.fullName());
+    assertEquals(expected.preferredName(), actual.preferredName());
     assertEquals(expected.tokenSubject(), actual.tokenSubject());
   }
 
@@ -97,12 +92,7 @@ class UserRepositoryIntegrationTest
   @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
   class QueryTest
   {
-    private static final User USER_2 = User.builder()
-      .email("another.test@testing.com")
-      .firstName("Another")
-      .lastName("Test")
-      .tokenSubject("TK2")
-      .build();
+    private static final User USER_2 = new User("another.test@testing.com", "Another Test", "Another", "TK2");
 
     @BeforeEach
     void createUsers()
@@ -123,15 +113,15 @@ class UserRepositoryIntegrationTest
     }
 
     @Test
-    void shouldFindByFirstName()
+    void shouldFindByFullName()
     {
-      assertWhere(expectedUser -> "firstName = " + expectedUser.firstName());
+      assertWhere(expectedUser -> "fullName = " + expectedUser.fullName());
     }
 
     @Test
-    void shouldFindByLastName()
+    void shouldFindByPreferredName()
     {
-      assertWhere(expectedUser -> "lastName = " + expectedUser.lastName());
+      assertWhere(expectedUser -> "preferredName = " + expectedUser.preferredName());
     }
 
     @Test
@@ -149,12 +139,7 @@ class UserRepositoryIntegrationTest
 
     private User copy(User user)
     {
-      return User.builder()
-        .email(user.email())
-        .firstName(user.firstName())
-        .lastName(user.lastName())
-        .tokenSubject(user.tokenSubject())
-        .build();
+      return new User(user.email(), user.fullName(), user.preferredName(), user.tokenSubject());
     }
   }
 }

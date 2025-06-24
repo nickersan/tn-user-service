@@ -15,9 +15,9 @@ Contract.make
     body(
       """
       [
-        {"email":"one.first@mail.com","firstName":"One","lastName":"First","tokenSubject":"T1"},
-        {"firstName":"Two","lastName":"Second","tokenSubject":"T2"},
-        {"email":"three.third@mail.com","firstName":"Three","lastName":"Third","tokenSubject":"T3"}
+        {"email":"one.first@mail.com","fullName":"One First","preferredName":"One","tokenSubject":"T1"},
+        {"fullName":"Two Second","preferredName":"Two","tokenSubject":"T2"},
+        {"email":"three.third@mail.com","fullName":"Three Third","preferredName":"Three","tokenSubject":"T3"}
       ]
       """
     )

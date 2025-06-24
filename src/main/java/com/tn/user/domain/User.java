@@ -16,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Accessors(fluent = true)
 @Getter
 @EqualsAndHashCode
@@ -53,15 +51,15 @@ public class User
   @NotNull
   private String email;
 
-  @Column(name = "first_name", nullable = false, length = 100)
+  @Column(name = "full_name", nullable = false, length = 100)
   @JsonProperty
   @NotNull
-  private String firstName;
+  private String fullName;
 
-  @Column(name = "last_name", nullable = false, length = 100)
+  @Column(name = "preferred_name", nullable = false, length = 100)
   @JsonProperty
   @NotNull
-  private String lastName;
+  private String preferredName;
 
   @Column(name = "token_subject", length = 100)
   @JsonProperty
@@ -71,11 +69,11 @@ public class User
   @JsonProperty
   private LocalDateTime created;
 
-  public User(String email, String firstName, String lastName, String tokenSubject)
+  public User(String email, String fullName, String preferredName, String tokenSubject)
   {
     this.email = email;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.fullName = fullName;
+    this.preferredName = preferredName;
     this.tokenSubject = tokenSubject;
   }
 }

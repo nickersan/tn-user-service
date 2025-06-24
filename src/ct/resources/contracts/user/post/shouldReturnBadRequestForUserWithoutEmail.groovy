@@ -14,7 +14,7 @@ Contract.make
     }
     body(
       """
-      {"firstName":"One","lastName":"First","tokenSubject":"T1"}
+      {"fullName":"One First","preferredName":"One","tokenSubject":"T1"}
       """
     )
   }

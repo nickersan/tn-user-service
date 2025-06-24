@@ -23,9 +23,9 @@ import com.tn.user.repository.UserRepository;
 
 public abstract class UserGetBase extends Base
 {
-  private static final User USER_1 = new User(1L, "one.first@mail.com", "One", "First", "T1", created(1));
-  private static final User USER_2 = new User(2L, "two.second@mail.com", "Two", "Second", "T2", created(2));
-  private static final User USER_3 = new User(3L, "three.third@mail.com", "Three", "Third", "T3", created(3));
+  private static final User USER_1 = new User(1L, "one.first@mail.com", "One First", "One", "T1", created(1));
+  private static final User USER_2 = new User(2L, "two.second@mail.com", "Two Second", "Two", "T2", created(2));
+  private static final User USER_3 = new User(3L, "three.third@mail.com", "Three Third", "Three", "T3", created(3));
 
   @MockitoBean
   UserRepository userRepository;
@@ -45,8 +45,8 @@ public abstract class UserGetBase extends Base
     Getter<User> idGetter = Getter.longValue("id", User::id);
     Collection<Getter<User>> getters = List.of(
       Getter.comparableValue(User.Fields.email, User::email),
-      Getter.comparableValue(User.Fields.firstName, User::firstName),
-      Getter.comparableValue(User.Fields.lastName, User::lastName),
+      Getter.comparableValue(User.Fields.fullName, User::fullName),
+      Getter.comparableValue(User.Fields.preferredName, User::preferredName),
       Getter.comparableValue(User.Fields.tokenSubject, User::tokenSubject),
       Getter.comparableValue(User.Fields.created, User::created)
     );

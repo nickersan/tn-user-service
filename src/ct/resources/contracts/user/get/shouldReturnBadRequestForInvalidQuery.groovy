@@ -2,7 +2,7 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make
 {
-  description "should return NOT FOUND 404"
+  description "should return BAD REQUEST 400"
 
   request
   {

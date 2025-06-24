@@ -55,7 +55,7 @@ public abstract class UserSaveBase extends Base
   private User save(User user)
   {
     int count = counter.incrementAndGet();
-    return new User((long)count, user.email(), user.firstName(), user.lastName(), user.tokenSubject(), created(count));
+    return new User((long)count, user.email(), user.fullName(), user.preferredName(), user.tokenSubject(), created(count));
   }
 
   private static LocalDateTime created(int offset)

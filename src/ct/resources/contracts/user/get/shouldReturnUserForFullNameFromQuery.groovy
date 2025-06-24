@@ -2,12 +2,12 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make
 {
-  description "should return OK 200 and user for created"
+  description "should return OK 200 and user for full-name"
 
   request
   {
     method GET()
-    url("/?created=2025-06-20T17:31:01&created=2025-06-20T17:32:02")
+    url("/?q=fullName=One First||fullName=Two Second")
   }
 
   response

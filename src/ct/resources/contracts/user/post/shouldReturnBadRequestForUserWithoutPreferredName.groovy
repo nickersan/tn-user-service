@@ -2,11 +2,11 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make
 {
-  description "should not save user without lastName and return BAD REQUEST 400"
+  description "should not save user without preferredName and return BAD REQUEST 400"
 
   request
   {
-    method PUT()
+    method POST()
     url("/")
     headers
     {
@@ -14,7 +14,7 @@ Contract.make
     }
     body(
       """
-      {"email":"one.first@mail.com","firstName":"One","tokenSubject":"T1"}
+      {"email":"one.first@mail.com","fullName":"One First","tokenSubject":"T1"}
       """
     )
   }
@@ -28,7 +28,7 @@ Contract.make
     }
     body(
       """
-      {"message":"Invalid body","detail":["lastName must not be null"]}                        
+      {"message":"Invalid body","detail":["preferredName must not be null"]}                        
       """
     )
   }
