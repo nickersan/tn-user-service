@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static com.tn.user.domain.IdentifierType.EMAIL;
+
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -23,19 +26,21 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 
 import com.tn.lang.Iterables;
+import com.tn.user.AbstractPostgresIntegrationTest;
 import com.tn.user.domain.User;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class UserRepositoryIntegrationTest
+class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
 {
-  private static final User USER = new User("test.tester@testing.com", "Test Tester", "Test", "TK1");
+  private static final User USER = new User(EMAIL, "test.tester@testing.com", "Test Tester", "Test", "TK1");
 
   @Autowired
   private UserRepository userRepository;
 
   private void assertUser(User expected, User actual)
   {
-    assertEquals(expected.email(), actual.email());
+    assertEquals(expected.identifierType(), actual.identifierType());
+    assertEquals(expected.identifierValue(), actual.identifierValue());
     assertEquals(expected.fullName(), actual.fullName());
     assertEquals(expected.preferredName(), actual.preferredName());
     assertEquals(expected.tokenSubject(), actual.tokenSubject());
@@ -47,6 +52,8 @@ class UserRepositoryIntegrationTest
   @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
   class CrudTest
   {
+    private static final AtomicReference<Long> USER_ID = new AtomicReference<>();
+
     @Test
     @Order(1)
     @Rollback(false)
@@ -56,6 +63,8 @@ class UserRepositoryIntegrationTest
       assertUser(USER, user);
       assertNotNull(user.id());
 //    assertNotNull(user.created());
+
+      USER_ID.set(user.id());
     }
 
     @Test
@@ -69,10 +78,9 @@ class UserRepositoryIntegrationTest
 
     @Test
     @Order(3)
-    void
-    shouldReadById()
+    void shouldReadById()
     {
-      User user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      User user = userRepository.findById(USER_ID.get()).orElseThrow(AssertionFailedError::new);
       assertUser(USER, user);
       assertNotNull(user.created());
     }
@@ -81,9 +89,9 @@ class UserRepositoryIntegrationTest
     @Order(4)
     void shouldDelete()
     {
-      User user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      User user = userRepository.findById(USER_ID.get()).orElseThrow(AssertionFailedError::new);
       userRepository.delete(user);
-      assertTrue(userRepository.findById(1L).isEmpty());
+      assertTrue(userRepository.findById(USER_ID.get()).isEmpty());
     }
   }
 
@@ -92,7 +100,7 @@ class UserRepositoryIntegrationTest
   @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
   class QueryTest
   {
-    private static final User USER_2 = new User("another.test@testing.com", "Another Test", "Another", "TK2");
+    private static final User USER_2 = new User(EMAIL, "another.test@testing.com", "Another Test", "Another", "TK2");
 
     @BeforeEach
     void createUsers()
@@ -107,9 +115,9 @@ class UserRepositoryIntegrationTest
     }
 
     @Test
-    void shouldFindByEmail()
+    void shouldFindByIdentifierValue()
     {
-      assertWhere(expectedUser -> "email = " + expectedUser.email());
+      assertWhere(expectedUser -> "identifierValue = " + expectedUser.identifierValue());
     }
 
     @Test
@@ -139,7 +147,7 @@ class UserRepositoryIntegrationTest
 
     private User copy(User user)
     {
-      return new User(user.email(), user.fullName(), user.preferredName(), user.tokenSubject());
+      return new User(user.identifierType(), user.identifierValue(), user.fullName(), user.preferredName(), user.tokenSubject());
     }
   }
 }
