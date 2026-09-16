@@ -52,7 +52,7 @@ class UserRepositoryIntegrationTest
     @Rollback(false)
     void shouldSave()
     {
-      var user = userRepository.save(USER);
+      User user = userRepository.save(USER);
       assertUser(USER, user);
       assertNotNull(user.id());
 //    assertNotNull(user.created());
@@ -62,7 +62,7 @@ class UserRepositoryIntegrationTest
     @Order(2)
     void shouldRead()
     {
-      var user = StreamSupport.stream(userRepository.findAll().spliterator(), false).findFirst().orElseThrow(AssertionFailedError::new);
+      User user = StreamSupport.stream(userRepository.findAll().spliterator(), false).findFirst().orElseThrow(AssertionFailedError::new);
       assertUser(USER, user);
       assertNotNull(user.created());
     }
@@ -72,7 +72,7 @@ class UserRepositoryIntegrationTest
     void
     shouldReadById()
     {
-      var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      User user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
       assertUser(USER, user);
       assertNotNull(user.created());
     }
@@ -81,7 +81,7 @@ class UserRepositoryIntegrationTest
     @Order(4)
     void shouldDelete()
     {
-      var user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
+      User user = userRepository.findById(1L).orElseThrow(AssertionFailedError::new);
       userRepository.delete(user);
       assertTrue(userRepository.findById(1L).isEmpty());
     }
@@ -132,7 +132,7 @@ class UserRepositoryIntegrationTest
 
     private void assertWhere(Function<User, String> queryProvider)
     {
-      var users = Iterables.asList(userRepository.findWhere(queryProvider.apply(USER_2)));
+      List<User> users = Iterables.asList(userRepository.findWhere(queryProvider.apply(USER_2)));
       assertEquals(1, users.size());
       assertUser(USER_2, users.getFirst());
     }
