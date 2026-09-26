@@ -3,7 +3,8 @@
     <encoder class="net.logstash.logback.encoder.LogstashEncoder">
       <decorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">
         <defaultMask>****</defaultMask>
-        <path>identifierValue</path>
+        <path>email</path>
+        <path>phone</path>
       </decorator>
     </encoder>
   </appender>

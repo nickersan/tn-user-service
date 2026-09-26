@@ -2,9 +2,11 @@ package com.tn.user.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static com.tn.user.domain.IdentifierType.EMAIL;
+import static com.tn.user.domain.IdentifierType.PHONE;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 
@@ -32,18 +35,17 @@ import com.tn.user.domain.User;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
 {
-  private static final User USER = new User(EMAIL, "test.tester@testing.com", "Test Tester", "Test", "TK1");
+  private static final User USER = new User("test.tester@testing.com", null, "Test Tester", "Test");
 
   @Autowired
   private UserRepository userRepository;
 
   private void assertUser(User expected, User actual)
   {
-    assertEquals(expected.identifierType(), actual.identifierType());
-    assertEquals(expected.identifierValue(), actual.identifierValue());
+    assertEquals(expected.email(), actual.email());
+    assertEquals(expected.phone(), actual.phone());
     assertEquals(expected.fullName(), actual.fullName());
     assertEquals(expected.preferredName(), actual.preferredName());
-    assertEquals(expected.tokenSubject(), actual.tokenSubject());
   }
 
   @Nested
@@ -100,7 +102,7 @@ class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
   @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
   class QueryTest
   {
-    private static final User USER_2 = new User(EMAIL, "another.test@testing.com", "Another Test", "Another", "TK2");
+    private static final User USER_2 = new User("another.test@testing.com", null, "Another Test", "Another");
 
     @BeforeEach
     void createUsers()
@@ -115,9 +117,9 @@ class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
     }
 
     @Test
-    void shouldFindByIdentifierValue()
+    void shouldFindByEmail()
     {
-      assertWhere(expectedUser -> "identifierValue = " + expectedUser.identifierValue());
+      assertWhere(expectedUser -> "email = " + expectedUser.email());
     }
 
     @Test
@@ -132,12 +134,6 @@ class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
       assertWhere(expectedUser -> "preferredName = " + expectedUser.preferredName());
     }
 
-    @Test
-    void shouldFindByTokenSubject()
-    {
-      assertWhere(expectedUser -> "tokenSubject = " + expectedUser.tokenSubject());
-    }
-
     private void assertWhere(Function<User, String> queryProvider)
     {
       List<User> users = Iterables.asList(userRepository.findWhere(queryProvider.apply(USER_2)));
@@ -147,7 +143,46 @@ class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
 
     private User copy(User user)
     {
-      return new User(user.identifierType(), user.identifierValue(), user.fullName(), user.preferredName(), user.tokenSubject());
+      return new User(null, user.email(), user.phone(), user.fullName(), user.preferredName(), null);
+    }
+  }
+
+  @Nested
+  @Isolated
+  @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+  class FindOrCreateTest
+  {
+    @AfterEach
+    void deleteUsers()
+    {
+      userRepository.deleteAll();
+    }
+
+    @Test
+    void shouldCreateANewUserPerIdentifierType()
+    {
+      User email = userRepository.findOrCreate(EMAIL, "find-or-create.email@testing.com");
+      assertEquals("find-or-create.email@testing.com", email.email());
+
+      User phone = userRepository.findOrCreate(PHONE, "+441234500000");
+      assertEquals("+441234500000", phone.phone());
+    }
+
+    @Test
+    void shouldReturnTheExistingUserForAKnownValue()
+    {
+      User created = userRepository.findOrCreate(EMAIL, "find-or-create.existing@testing.com");
+      User found = userRepository.findOrCreate(EMAIL, "find-or-create.existing@testing.com");
+
+      assertEquals(created.id(), found.id());
+    }
+
+    @Test
+    void shouldRejectCreatingADuplicateEmailDirectly()
+    {
+      userRepository.save(new User("duplicate.email@testing.com", null, null, null));
+
+      assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(new User("duplicate.email@testing.com", null, null, null)));
     }
   }
 }

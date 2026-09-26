@@ -20,15 +20,14 @@ public class ShouldCreateUser implements Supplier<Collection<Contract>>
         r.method(r.POST());
         r.url("/v1/users");
         r.headers(h -> h.contentType(h.applicationJson()));
-        r.body(ContractVerifierUtil.map().entry("identifierType", "EMAIL").entry("identifierValue", "new@testing.com"));
+        r.body(ContractVerifierUtil.map().entry("email", "new@testing.com"));
       });
       c.response(r ->
       {
         r.status(201);
         r.headers(h -> h.contentType(h.applicationJson()));
         r.body(ContractVerifierUtil.map()
-          .entry("identifierType", "EMAIL")
-          .entry("identifierValue", "new@testing.com")
+          .entry("email", "new@testing.com")
         );
       });
     }));

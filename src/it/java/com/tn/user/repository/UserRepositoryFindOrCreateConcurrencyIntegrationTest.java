@@ -46,7 +46,7 @@ class UserRepositoryFindOrCreateConcurrencyIntegrationTest extends AbstractPostg
         .collect(Collectors.toSet());
 
       assertEquals(1, resultingIds.size());
-      assertEquals(1, count(userRepository.findWhere("identifierValue = " + identifierValue)));
+      assertEquals(1, count(userRepository.findWhere("email = " + identifierValue)));
     }
     finally
     {
@@ -59,7 +59,7 @@ class UserRepositoryFindOrCreateConcurrencyIntegrationTest extends AbstractPostg
     return StreamSupport.stream(iterable.spliterator(), false).count();
   }
 
-  private Long get(Future<Long> future)
+  private <T> T get(Future<T> future)
   {
     try
     {

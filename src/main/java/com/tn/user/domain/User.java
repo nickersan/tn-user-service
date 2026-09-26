@@ -6,10 +6,10 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.hypersistence.utils.hibernate.id.Tsid;
@@ -42,14 +42,13 @@ public class User
   @JsonProperty
   private Long id;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "identifier_type", nullable = false)
+  @Email
   @JsonProperty
-  private IdentifierType identifierType;
+  private String email;
 
-  @Column(name = "identifier_value", nullable = false)
+  @Pattern(regexp = "^\\+?[1-9]\\d{6,14}$", message = "must be a valid phone number")
   @JsonProperty
-  private String identifierValue;
+  private String phone;
 
   @Column(name = "full_name", length = 100)
   @JsonProperty
@@ -59,20 +58,15 @@ public class User
   @JsonProperty
   private String preferredName;
 
-  @Column(name = "token_subject", length = 100)
-  @JsonProperty
-  private String tokenSubject;
-
   @CreatedDate
   @JsonProperty
   private LocalDateTime created;
 
-  public User(IdentifierType identifierType, String identifierValue, String fullName, String preferredName, String tokenSubject)
+  public User(String email, String phone, String fullName, String preferredName)
   {
-    this.identifierType = identifierType;
-    this.identifierValue = identifierValue;
+    this.email = email;
+    this.phone = phone;
     this.fullName = fullName;
     this.preferredName = preferredName;
-    this.tokenSubject = tokenSubject;
   }
 }

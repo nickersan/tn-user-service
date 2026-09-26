@@ -27,8 +27,7 @@ public class ShouldFindOrCreateUser implements Supplier<Collection<Contract>>
         r.status(r.OK());
         r.headers(h -> h.contentType(h.applicationJson()));
         r.body(ContractVerifierUtil.map()
-          .entry("identifierType", "EMAIL")
-          .entry("identifierValue", "new@testing.com")
+          .entry("email", "new@testing.com")
         );
       });
     }));

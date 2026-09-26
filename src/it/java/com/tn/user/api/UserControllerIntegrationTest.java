@@ -6,8 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.DELETE;
 
-import static com.tn.user.domain.IdentifierType.EMAIL;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -28,7 +26,7 @@ import com.tn.user.repository.UserRepository;
 class UserControllerIntegrationTest extends AbstractPostgresIntegrationTest
 {
   private static final long USER_ID = 1L;
-  private static final User USER = new User(USER_ID, EMAIL, "test.tester@testing.com", "Test", "Tester", "T1", LocalDateTime.now());
+  private static final User USER = new User(USER_ID, "test.tester@testing.com", null, "Test", "Tester", LocalDateTime.now());
 
   @MockitoBean
   UserRepository userRepository;
@@ -41,10 +39,10 @@ class UserControllerIntegrationTest extends AbstractPostgresIntegrationTest
   {
     when(userRepository.findById(USER_ID)).thenReturn(Optional.of(USER));
 
-    ResponseEntity<UserResponse> response = testRestTemplate.getForEntity("/v1/users/{id}", UserResponse.class, USER_ID);
+    ResponseEntity<User> response = testRestTemplate.getForEntity("/v1/users/{id}", User.class, USER_ID);
 
     assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertEquals(UserResponse.from(USER), response.getBody());
+    assertEquals(USER, response.getBody());
   }
 
   @Test

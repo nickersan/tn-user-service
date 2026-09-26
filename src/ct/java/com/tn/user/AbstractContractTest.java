@@ -21,8 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.tn.user.api.UserActionsController;
-import com.tn.user.api.UserController;
+import com.tn.user.controllers.UserActionsController;
+import com.tn.user.controllers.UserController;
 import com.tn.user.domain.User;
 import com.tn.user.repository.UserRepository;
 
@@ -30,8 +30,8 @@ import com.tn.user.repository.UserRepository;
 @DirtiesContext
 public abstract class AbstractContractTest extends AbstractPostgresIntegrationTest
 {
-  private static final User USER = new User(1L, EMAIL, "test@testing.com", "Test Tester", "Test", "T1", LocalDateTime.of(2026, 1, 1, 12, 0));
-  private static final User NEW_USER = new User(2L, EMAIL, "new@testing.com", null, null, null, LocalDateTime.of(2026, 1, 1, 12, 0));
+  private static final User USER = new User(1L, "test@testing.com", null, "Test Tester", "Test", LocalDateTime.of(2026, 1, 1, 12, 0));
+  private static final User NEW_USER = new User(2L, "new@testing.com", null, null, null, LocalDateTime.of(2026, 1, 1, 12, 0));
 
   @Autowired
   UserController userController;
