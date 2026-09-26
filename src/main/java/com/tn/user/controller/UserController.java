@@ -1,4 +1,4 @@
-package com.tn.user.controllers;
+package com.tn.user.controller;
 
 import static com.tn.lang.Strings.isNotNullOrWhitespace;
 import static net.logstash.logback.argument.StructuredArguments.kv;

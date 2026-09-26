@@ -1,4 +1,4 @@
-package com.tn.user.controllers;
+package com.tn.user.controller;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

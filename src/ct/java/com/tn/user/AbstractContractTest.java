@@ -21,8 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.tn.user.controllers.UserActionsController;
-import com.tn.user.controllers.UserController;
+import com.tn.user.controller.UserActionsController;
+import com.tn.user.controller.UserController;
 import com.tn.user.domain.User;
 import com.tn.user.repository.UserRepository;
 
