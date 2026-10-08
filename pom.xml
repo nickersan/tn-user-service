@@ -11,9 +11,7 @@
   <parent>
     <groupId>com.tn</groupId>
     <artifactId>tn-parent</artifactId>
-    <!-- TEMPORARY: see tn-auth-service's pom.xml for why this is a SNAPSHOT, not
-         a released version. Move both together once tn-parent releases. -->
-    <version>2.2.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <relativePath/>
   </parent>
 
