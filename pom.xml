@@ -11,7 +11,7 @@
   <parent>
     <groupId>com.tn</groupId>
     <artifactId>tn-parent</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <relativePath/>
   </parent>
 
