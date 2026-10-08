@@ -27,7 +27,7 @@ public class Application
       sensitive(REGEX_SECRET)
     );
 
-    var application = new SpringApplication(Application.class);
+    SpringApplication application = new SpringApplication(Application.class);
     application.addListeners(propertyLogger);
     application.run(args);
   }

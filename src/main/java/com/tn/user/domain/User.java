@@ -6,15 +6,13 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,41 +37,36 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class User
 {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userId")
-  @SequenceGenerator(name = "userId", sequenceName = "user_id_seq", allocationSize = 1)
+  @Tsid
   @Column(name = "user_id")
   @JsonProperty
   private Long id;
 
-  @Column(nullable = false, unique = true)
-  @JsonProperty
   @Email
-  @NotNull
+  @JsonProperty
   private String email;
 
-  @Column(name = "full_name", nullable = false, length = 100)
+  @Pattern(regexp = "^\\+?[1-9]\\d{6,14}$", message = "must be a valid phone number")
   @JsonProperty
-  @NotNull
+  private String phone;
+
+  @Column(name = "full_name", length = 100)
+  @JsonProperty
   private String fullName;
 
-  @Column(name = "preferred_name", nullable = false, length = 100)
+  @Column(name = "preferred_name", length = 100)
   @JsonProperty
-  @NotNull
   private String preferredName;
-
-  @Column(name = "token_subject", length = 100)
-  @JsonProperty
-  private String tokenSubject;
 
   @CreatedDate
   @JsonProperty
   private LocalDateTime created;
 
-  public User(String email, String fullName, String preferredName, String tokenSubject)
+  public User(String email, String phone, String fullName, String preferredName)
   {
     this.email = email;
+    this.phone = phone;
     this.fullName = fullName;
     this.preferredName = preferredName;
-    this.tokenSubject = tokenSubject;
   }
 }

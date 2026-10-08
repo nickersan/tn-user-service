@@ -11,18 +11,22 @@
   <parent>
     <groupId>com.tn</groupId>
     <artifactId>tn-parent</artifactId>
-    <version>0.0.01-SNAPSHOT</version>
+    <!-- TEMPORARY: see tn-auth-service's pom.xml for why this is a SNAPSHOT, not
+         a released version. Move both together once tn-parent releases. -->
+    <version>2.2.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
 
   <groupId>com.tn.service</groupId>
   <artifactId>tn-user-service</artifactId>
-  <version>1.0.00-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   
   <packaging>jar</packaging>
 
   <properties>
 
-    <contract-producer.base-class.package>com.tn.user.api</contract-producer.base-class.package>
+    <contract-producer.base-class.tests>com.tn.user.AbstractContractTest</contract-producer.base-class.tests>
+    <contract-producer.base-package.tests>com.tn.user</contract-producer.base-package.tests>
 
   </properties>
 
@@ -31,38 +35,71 @@
     <dependency>
       <groupId>com.tn.query</groupId>
       <artifactId>tn-query-java</artifactId>
-      <version>0.0.01-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
+    <!-- excludes two transitive versions (via tn-query-jpa) that are incompatible with
+         what Boot 4.0.5 itself manages: spring-data-commons 3.4.4 (missing
+         RepositoryFragmentsContributor, needed by spring-data-jpa 4.0.4) and
+         jakarta.persistence-api 3.1.0 (missing FindOption, needed by Hibernate 7.2) -->
     <dependency>
       <groupId>com.tn.service.data</groupId>
       <artifactId>tn-data-service-jpa</artifactId>
-      <version>0.0.01-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.data</groupId>
+          <artifactId>spring-data-commons</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.persistence</groupId>
+          <artifactId>jakarta.persistence-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>com.tn.service.data</groupId>
       <artifactId>tn-data-service-jpa</artifactId>
-      <version>0.0.01-SNAPSHOT</version>
+      <version>1.0.0</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
+    <!-- overrides the old jackson-databind pulled in transitively by jjwt-jackson,
+         which is otherwise incompatible with the jackson-annotations version tn-parent manages -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hypersistence</groupId>
+      <artifactId>hypersistence-utils-hibernate-71</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
 
     <dependency>
@@ -88,6 +125,36 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-resttestclient</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -120,12 +187,6 @@
 <!--      <version>5.2.1</version>-->
 <!--      <scope>test</scope>-->
 <!--    </dependency>-->
-
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-contract-stub-runner-boot</artifactId>
-      <scope>test</scope>
-    </dependency>
 
   </dependencies>
 
