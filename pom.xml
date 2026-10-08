@@ -11,7 +11,7 @@
   <parent>
     <groupId>com.tn</groupId>
     <artifactId>tn-parent</artifactId>
-    <version>3.0.1</version>
+    <version>4.0.0</version>
     <relativePath/>
   </parent>
 
@@ -26,6 +26,11 @@
     <contract-producer.base-class.tests>com.tn.user.AbstractContractTest</contract-producer.base-class.tests>
     <contract-producer.base-package.tests>com.tn.user</contract-producer.base-package.tests>
 
+    <tn-data-service-jpa.version>2.0.0</tn-data-service-jpa.version>
+    <tn-query-java.version>1.0.0</tn-query-java.version>
+    <!-- not a dependency: tn-parent's contracts profile builds on its test-jar -->
+    <tn-service.version>2.0.0</tn-service.version>
+
   </properties>
 
   <dependencies>
@@ -33,6 +38,7 @@
     <dependency>
       <groupId>com.tn.query</groupId>
       <artifactId>tn-query-java</artifactId>
+      <version>${tn-query-java.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -43,6 +49,7 @@
     <dependency>
       <groupId>com.tn.service.data</groupId>
       <artifactId>tn-data-service-jpa</artifactId>
+      <version>${tn-data-service-jpa.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework.data</groupId>
@@ -58,7 +65,7 @@
     <dependency>
       <groupId>com.tn.service.data</groupId>
       <artifactId>tn-data-service-jpa</artifactId>
-      <version>1.0.0</version>
+      <version>${tn-data-service-jpa.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
