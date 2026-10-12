@@ -21,11 +21,17 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.tn.user.api.InvalidAvatarException;
+import com.tn.user.api.TooManyAvatarUploadsException;
+import com.tn.user.api.UserNotFoundException;
+import com.tn.user.controller.AvatarController;
 import com.tn.user.controller.UserActionsController;
 import com.tn.user.controller.UserController;
+import com.tn.user.domain.Avatar;
 import com.tn.user.domain.Phone;
 import com.tn.user.domain.User;
 import com.tn.user.repository.UserRepository;
+import com.tn.user.service.AvatarService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext
@@ -43,15 +49,34 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
   @Autowired
   UserController userController;
 
+  // the users the avatar contracts are about: the avatar a first upload makes, a replacement for it, and nothing at all
+  private static final User USER_WITH_AVATAR = new User(1L, "test@testing.com", null, "Test Tester", "Test", LocalDateTime.of(2026, 1, 1, 12, 0), 1, 1);
+  private static final User USER_WITH_REPLACED_AVATAR = new User(5L, "replaced@testing.com", null, null, null, LocalDateTime.of(2026, 1, 1, 12, 0), 2, 2);
+  private static final Avatar AVATAR = new Avatar("image/png", new byte[] {(byte)0x89, 'P', 'N', 'G'});
+
   @Autowired
   UserActionsController userActionsController;
+
+  @Autowired
+  AvatarController avatarController;
 
   @MockitoBean
   UserRepository userRepository;
 
+  @MockitoBean
+  AvatarService avatarService;
+
   @BeforeEach
   public void setup()
   {
+    when(avatarService.set(eq(1L), any())).thenReturn(USER_WITH_AVATAR);
+    when(avatarService.set(eq(5L), any())).thenReturn(USER_WITH_REPLACED_AVATAR);
+    when(avatarService.set(eq(2L), any())).thenThrow(new InvalidAvatarException("The avatar is larger than 102400 bytes"));
+    when(avatarService.set(eq(3L), any())).thenThrow(new InvalidAvatarException("The avatar is not a JPEG or PNG"));
+    when(avatarService.set(eq(6L), any())).thenThrow(new TooManyAvatarUploadsException("Too many avatars uploaded; try again later"));
+    when(avatarService.get(1L)).thenReturn(AVATAR);
+    when(avatarService.get(999L)).thenThrow(new UserNotFoundException(999L));
+
     when(userRepository.findById(1L)).thenReturn(Optional.of(USER));
     when(userRepository.findById(4L)).thenReturn(Optional.of(PHONE_OF_ANOTHER_USER_HOLDER));
     when(userRepository.findById(999L)).thenReturn(Optional.empty());
@@ -65,7 +90,7 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
     when(userRepository.findOrCreateByPhone(eq(new Phone(44, PHONE_OF_ANOTHER_USER)))).thenReturn(PHONE_OF_ANOTHER_USER_HOLDER);
 
     RestAssuredMockMvc.standaloneSetup(
-      MockMvcBuilders.standaloneSetup(this.userController, this.userActionsController)
+      MockMvcBuilders.standaloneSetup(this.userController, this.userActionsController, this.avatarController)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
     );
   }

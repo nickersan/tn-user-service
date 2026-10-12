@@ -67,9 +67,7 @@ public class UserController implements UserApi
     requireIdentifier(request);
 
     User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-    User updated = new User(id, request.email(), request.phone(), request.fullName(), request.preferredName(), user.created());
-
-    return userRepository.save(updated);
+    return userRepository.save(user.with(request.email(), request.phone(), request.fullName(), request.preferredName()));
   }
 
   @Override

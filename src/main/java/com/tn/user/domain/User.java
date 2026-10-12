@@ -12,6 +12,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import lombok.AllArgsConstructor;
@@ -64,11 +66,33 @@ public class User
   @JsonProperty
   private LocalDateTime created;
 
+  /** The version of the user's avatar, which changes with each new one; absent when they have none. */
+  @Column(name = "avatar_version", updatable = false)
+  @JsonProperty
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Integer avatarVersion;
+
+  /** How many avatars the user has ever set. Never goes down, so that a version is never reused. */
+  @Column(name = "avatar_revision", updatable = false)
+  @JsonIgnore
+  private int avatarRevision;
+
   public User(String email, Phone phone, String fullName, String preferredName)
   {
     this.email = email;
     this.phone = phone;
     this.fullName = fullName;
     this.preferredName = preferredName;
+  }
+
+  public User(Long id, String email, Phone phone, String fullName, String preferredName, LocalDateTime created)
+  {
+    this(id, email, phone, fullName, preferredName, created, null, 0);
+  }
+
+  /** The same user with new details: who they are, when they were created and their avatar stay. */
+  public User with(String email, Phone phone, String fullName, String preferredName)
+  {
+    return new User(id, email, phone, fullName, preferredName, created, avatarVersion, avatarRevision);
   }
 }
