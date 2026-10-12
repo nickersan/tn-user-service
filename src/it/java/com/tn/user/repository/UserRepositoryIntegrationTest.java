@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static com.tn.user.domain.IdentifierType.EMAIL;
-import static com.tn.user.domain.IdentifierType.PHONE;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -30,11 +27,14 @@ import org.springframework.test.annotation.Rollback;
 
 import com.tn.lang.Iterables;
 import com.tn.user.AbstractPostgresIntegrationTest;
+import com.tn.user.domain.Phone;
 import com.tn.user.domain.User;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
 {
+  private static final Phone UK_MOBILE = new Phone(44, "7911123456");
+  private static final Phone ITALIAN_LANDLINE = new Phone(39, "0612345678");
   private static final User USER = new User("test.tester@testing.com", null, "Test Tester", "Test");
 
   @Autowired
@@ -161,21 +161,47 @@ class UserRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
     @Test
     void shouldCreateANewUserPerIdentifierType()
     {
-      User email = userRepository.findOrCreate(EMAIL, "find-or-create.email@testing.com");
+      User email = userRepository.findOrCreateByEmail("find-or-create.email@testing.com");
       assertEquals("find-or-create.email@testing.com", email.email());
 
-      User phone = userRepository.findOrCreate(PHONE, "+441234500000");
-      assertEquals("+441234500000", phone.phone());
+      User phone = userRepository.findOrCreateByPhone(UK_MOBILE);
+      assertEquals(UK_MOBILE, phone.phone());
     }
 
     @Test
     void shouldReturnTheExistingUserForAKnownValue()
     {
-      User created = userRepository.findOrCreate(EMAIL, "find-or-create.existing@testing.com");
-      User found = userRepository.findOrCreate(EMAIL, "find-or-create.existing@testing.com");
+      User created = userRepository.findOrCreateByEmail("find-or-create.existing@testing.com");
+      User found = userRepository.findOrCreateByEmail("find-or-create.existing@testing.com");
 
       assertEquals(created.id(), found.id());
     }
+
+    @Test
+    void shouldFindTheSameUserForTheSamePhonePair()
+    {
+      User created = userRepository.findOrCreateByPhone(UK_MOBILE);
+      User found = userRepository.findOrCreateByPhone(new Phone(44, "7911123456"));
+
+      assertEquals(created.id(), found.id());
+    }
+
+    @Test
+    void shouldKeepAnItalianNumbersLeadingZero()
+    {
+      User user = userRepository.findOrCreateByPhone(ITALIAN_LANDLINE);
+
+      assertEquals(ITALIAN_LANDLINE, user.phone());
+    }
+
+    @Test
+    void shouldRejectTwoUsersSharingAPhonePair()
+    {
+      userRepository.save(new User(null, UK_MOBILE, null, null));
+
+      assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(new User(null, UK_MOBILE, null, null)));
+    }
+
 
     @Test
     void shouldRejectCreatingADuplicateEmailDirectly()

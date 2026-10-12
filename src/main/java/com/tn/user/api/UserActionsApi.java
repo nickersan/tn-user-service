@@ -1,7 +1,6 @@
 package com.tn.user.api;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tn.user.domain.IdentifierType;
+import com.tn.user.domain.Phone;
 import com.tn.user.domain.User;
 
 @RequestMapping("/v1/actions")
@@ -25,12 +24,11 @@ public interface UserActionsApi
   User findOrCreate(@Valid @RequestBody FindOrCreateRequest request);
 
   record FindOrCreateRequest(
-    @NotNull
-    @Schema(description = "EMAIL or PHONE")
-    IdentifierType identifierType,
-    @NotNull
-    @Schema(description = "The identifier value, in the format matching its type")
-    String identifierValue
+    @Schema(description = "An email address - supply this or a phone number, not both")
+    String email,
+    @Schema(description = "A phone number as a country calling code and a national number without its trunk prefix - supply this or an email address, not both")
+    @Valid
+    Phone phone
   )
   {}
 }

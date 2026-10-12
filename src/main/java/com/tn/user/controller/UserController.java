@@ -87,7 +87,7 @@ public class UserController implements UserApi
 
   private void requireIdentifier(UserRequest request)
   {
-    if (!isNotNullOrWhitespace(request.email()) && !isNotNullOrWhitespace(request.phone())) throw new MissingIdentifierException();
+    if (!isNotNullOrWhitespace(request.email()) && request.phone() == null) throw new MissingIdentifierException();
   }
 
   private LinkedMultiValueMap<String, String> queryParams(String q)

@@ -27,6 +27,7 @@ public class ShouldCreateUser implements Supplier<Collection<Contract>>
         r.status(201);
         r.headers(h -> h.contentType(h.applicationJson()));
         r.body(ContractVerifierUtil.map()
+          .entry("id", 2)
           .entry("email", "new@testing.com")
         );
       });

@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static com.tn.user.domain.IdentifierType.EMAIL;
-
 import java.util.List;
 
 import ch.qos.logback.classic.Level;
@@ -64,9 +62,9 @@ class UserActionsControllerLoggingTest
   void shouldLogFindOrCreateWithoutLeakingTheIdentifierValue()
   {
     UserRepository userRepository = mock(UserRepository.class);
-    when(userRepository.findOrCreate(EMAIL, EMAIL_VALUE)).thenReturn(new User(1L, EMAIL_VALUE, null, null, null, null));
+    when(userRepository.findOrCreateByEmail(EMAIL_VALUE)).thenReturn(new User(1L, EMAIL_VALUE, null, null, null, null));
 
-    new UserActionsController(userRepository).findOrCreate(new FindOrCreateRequest(EMAIL, EMAIL_VALUE));
+    new UserActionsController(userRepository).findOrCreate(new FindOrCreateRequest(EMAIL_VALUE, null));
 
     List<ILoggingEvent> events = appender.list;
     assertTrue(events.stream().anyMatch(event -> event.getLevel() == Level.INFO && event.getFormattedMessage().equals("Find-or-create resolved")));

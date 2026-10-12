@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.tn.user.domain.Phone;
 import com.tn.user.domain.User;
 
 @RequestMapping("/v1/users")
@@ -68,8 +69,9 @@ public interface UserApi
   record UserRequest(
     @Schema(description = "An email address linked to this user, if any")
     String email,
-    @Schema(description = "A phone number linked to this user, if any")
-    String phone,
+    @Schema(description = "A phone number linked to this user, if any: a country calling code and a national number without its trunk prefix")
+    @Valid
+    Phone phone,
     String fullName,
     String preferredName
   )

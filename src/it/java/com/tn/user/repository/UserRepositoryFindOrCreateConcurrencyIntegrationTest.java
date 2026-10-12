@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tn.user.AbstractPostgresIntegrationTest;
-import com.tn.user.domain.IdentifierType;
+import com.tn.user.domain.Phone;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class UserRepositoryFindOrCreateConcurrencyIntegrationTest extends AbstractPostgresIntegrationTest
@@ -28,25 +28,38 @@ class UserRepositoryFindOrCreateConcurrencyIntegrationTest extends AbstractPostg
   private UserRepository userRepository;
 
   @Test
-  void shouldCreateExactlyOneProfileForConcurrentFindOrCreateCallsOnANewIdentifier() throws Exception
+  void shouldCreateExactlyOneProfileForConcurrentFindOrCreateCallsOnANewEmail() throws Exception
   {
-    String identifierValue = "concurrent.test@testing.com";
+    String email = "concurrent.test@testing.com";
 
+    Set<Long> resultingIds = concurrently(() -> userRepository.findOrCreateByEmail(email).id());
+
+    assertEquals(1, resultingIds.size());
+    assertEquals(1, count(userRepository.findWhere("email = " + email)));
+  }
+
+  @Test
+  void shouldCreateExactlyOneProfileForConcurrentFindOrCreateCallsOnANewPhone() throws Exception
+  {
+    Phone phone = new Phone(44, "7911123789");
+
+    Set<Long> resultingIds = concurrently(() -> userRepository.findOrCreateByPhone(phone).id());
+
+    assertEquals(1, resultingIds.size());
+  }
+
+  private Set<Long> concurrently(Callable<Long> call) throws Exception
+  {
     ExecutorService executorService = Executors.newFixedThreadPool(CONCURRENT_CALLS);
     try
     {
-      List<Callable<Long>> calls = Stream.<Callable<Long>>generate(() -> () -> userRepository.findOrCreate(IdentifierType.EMAIL, identifierValue).id())
+      List<Callable<Long>> calls = Stream.generate(() -> call)
         .limit(CONCURRENT_CALLS)
         .toList();
 
-      List<Future<Long>> futures = executorService.invokeAll(calls);
-
-      Set<Long> resultingIds = futures.stream()
+      return executorService.invokeAll(calls).stream()
         .map(this::get)
         .collect(Collectors.toSet());
-
-      assertEquals(1, resultingIds.size());
-      assertEquals(1, count(userRepository.findWhere("email = " + identifierValue)));
     }
     finally
     {

@@ -8,6 +8,11 @@ public class MissingIdentifierException extends RuntimeException
 {
   public MissingIdentifierException()
   {
-    super("A user must have an email or a phone number");
+    this("A user must have an email or a phone number");
+  }
+
+  public MissingIdentifierException(String message)
+  {
+    super(message);
   }
 }

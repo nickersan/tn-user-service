@@ -25,7 +25,10 @@ public class ShouldGetUser implements Supplier<Collection<Contract>>
         r.status(r.OK());
         r.headers(h -> h.contentType(h.applicationJson()));
         r.body(ContractVerifierUtil.map()
+          .entry("id", 1)
           .entry("email", "test@testing.com")
+          .entry("fullName", "Test Tester")
+          .entry("preferredName", "Test")
         );
       });
     }));

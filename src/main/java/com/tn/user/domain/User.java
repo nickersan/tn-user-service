@@ -4,12 +4,13 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.hypersistence.utils.hibernate.id.Tsid;
@@ -46,9 +47,10 @@ public class User
   @JsonProperty
   private String email;
 
-  @Pattern(regexp = "^\\+?[1-9]\\d{6,14}$", message = "must be a valid phone number")
+  @Valid
+  @Embedded
   @JsonProperty
-  private String phone;
+  private Phone phone;
 
   @Column(name = "full_name", length = 100)
   @JsonProperty
@@ -62,7 +64,7 @@ public class User
   @JsonProperty
   private LocalDateTime created;
 
-  public User(String email, String phone, String fullName, String preferredName)
+  public User(String email, Phone phone, String fullName, String preferredName)
   {
     this.email = email;
     this.phone = phone;

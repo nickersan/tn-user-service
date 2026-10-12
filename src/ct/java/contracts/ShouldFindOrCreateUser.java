@@ -20,13 +20,14 @@ public class ShouldFindOrCreateUser implements Supplier<Collection<Contract>>
         r.method(r.POST());
         r.url("/v1/actions/find-or-create");
         r.headers(h -> h.contentType(h.applicationJson()));
-        r.body(ContractVerifierUtil.map().entry("identifierType", "EMAIL").entry("identifierValue", "new@testing.com"));
+        r.body(ContractVerifierUtil.map().entry("email", "new@testing.com"));
       });
       c.response(r ->
       {
         r.status(r.OK());
         r.headers(h -> h.contentType(h.applicationJson()));
         r.body(ContractVerifierUtil.map()
+          .entry("id", 2)
           .entry("email", "new@testing.com")
         );
       });
