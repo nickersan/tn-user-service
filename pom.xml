@@ -17,7 +17,7 @@
 
   <groupId>com.tn.service</groupId>
   <artifactId>tn-user-service</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   
   <packaging>jar</packaging>
 
