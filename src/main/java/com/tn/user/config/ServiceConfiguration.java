@@ -2,7 +2,6 @@ package com.tn.user.config;
 
 import jakarta.persistence.EntityManager;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +10,6 @@ import com.tn.user.domain.User;
 import com.tn.user.repository.UserRepositoryImpl;
 
 @Configuration
-@EnableConfigurationProperties(AvatarProperties.class)
 class ServiceConfiguration
 {
   @Bean
