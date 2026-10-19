@@ -25,6 +25,7 @@ import com.tn.user.api.InvalidAvatarException;
 import com.tn.user.api.TooManyAvatarUploadsException;
 import com.tn.user.api.UserNotFoundException;
 import com.tn.user.controller.AvatarController;
+import com.tn.user.controller.AvatarMediaController;
 import com.tn.user.controller.UserActionsController;
 import com.tn.user.controller.UserController;
 import com.tn.user.domain.Avatar;
@@ -52,6 +53,9 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
   // the users the avatar contracts are about: the avatar a first upload makes, a replacement for it, and nothing at all
   private static final User USER_WITH_AVATAR = new User(1L, "test@testing.com", null, "Test Tester", "Test", LocalDateTime.of(2026, 1, 1, 12, 0), 1, 1);
   private static final User USER_WITH_REPLACED_AVATAR = new User(5L, "replaced@testing.com", null, null, null, LocalDateTime.of(2026, 1, 1, 12, 0), 2, 2);
+  // the user an avatar item has been set for, and the one it has been cleared for
+  private static final User USER_WITH_AVATAR_MEDIA = new User(7L, "media@testing.com", null, "Media Tester", "Media", LocalDateTime.of(2026, 1, 1, 12, 0), null, 0, 123L);
+  private static final User USER_WITHOUT_AVATAR_MEDIA = new User(8L, "nomedia@testing.com", null, null, null, LocalDateTime.of(2026, 1, 1, 12, 0));
   private static final Avatar AVATAR = new Avatar("image/png", new byte[] {(byte)0x89, 'P', 'N', 'G'});
 
   @Autowired
@@ -59,6 +63,9 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
 
   @Autowired
   AvatarController avatarController;
+
+  @Autowired
+  AvatarMediaController avatarMediaController;
 
   @MockitoBean
   UserRepository userRepository;
@@ -77,6 +84,11 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
     when(avatarService.get(1L)).thenReturn(AVATAR);
     when(avatarService.get(999L)).thenThrow(new UserNotFoundException(999L));
 
+    when(userRepository.existsById(7L)).thenReturn(true);
+    when(userRepository.existsById(8L)).thenReturn(true);
+    when(userRepository.existsById(999L)).thenReturn(false);
+    when(userRepository.findById(7L)).thenReturn(Optional.of(USER_WITH_AVATAR_MEDIA));
+    when(userRepository.findById(8L)).thenReturn(Optional.of(USER_WITHOUT_AVATAR_MEDIA));
     when(userRepository.findById(1L)).thenReturn(Optional.of(USER));
     when(userRepository.findById(4L)).thenReturn(Optional.of(PHONE_OF_ANOTHER_USER_HOLDER));
     when(userRepository.findById(999L)).thenReturn(Optional.empty());
@@ -90,7 +102,7 @@ public abstract class AbstractContractTest extends AbstractPostgresIntegrationTe
     when(userRepository.findOrCreateByPhone(eq(new Phone(44, PHONE_OF_ANOTHER_USER)))).thenReturn(PHONE_OF_ANOTHER_USER_HOLDER);
 
     RestAssuredMockMvc.standaloneSetup(
-      MockMvcBuilders.standaloneSetup(this.userController, this.userActionsController, this.avatarController)
+      MockMvcBuilders.standaloneSetup(this.userController, this.userActionsController, this.avatarController, this.avatarMediaController)
         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
     );
   }

@@ -51,6 +51,9 @@ public class UserRepositoryImpl extends AbstractQueryableRepository<User> implem
 
   private static final String CLEAR_AVATAR_VERSION = "UPDATE users SET avatar_version = NULL WHERE user_id = :id";
 
+  private static final String SET_AVATAR_MEDIA = "UPDATE users SET avatar_media_id = :mediaId WHERE user_id = :id";
+  private static final String CLEAR_AVATAR_MEDIA = "UPDATE users SET avatar_media_id = NULL WHERE user_id = :id";
+
   public UserRepositoryImpl(EntityManager entityManager)
   {
     super(entityManager);
@@ -105,6 +108,22 @@ public class UserRepositoryImpl extends AbstractQueryableRepository<User> implem
   public void clearAvatarVersion(long id)
   {
     entityManager().createNativeQuery(CLEAR_AVATAR_VERSION).setParameter("id", id).executeUpdate();
+    entityManager().clear();
+  }
+
+  @Override
+  @Transactional
+  public void setAvatarMedia(long id, long mediaId)
+  {
+    entityManager().createNativeQuery(SET_AVATAR_MEDIA).setParameter("id", id).setParameter("mediaId", mediaId).executeUpdate();
+    entityManager().clear();
+  }
+
+  @Override
+  @Transactional
+  public void clearAvatarMedia(long id)
+  {
+    entityManager().createNativeQuery(CLEAR_AVATAR_MEDIA).setParameter("id", id).executeUpdate();
     entityManager().clear();
   }
 

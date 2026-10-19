@@ -77,6 +77,15 @@ public class User
   @JsonIgnore
   private int avatarRevision;
 
+  /**
+   * The id of the user's avatar in tn-media-service, which holds the picture; absent when they have none. A media item
+   * never changes, so the id is also the version: a different picture is a different id.
+   */
+  @Column(name = "avatar_media_id", updatable = false)
+  @JsonProperty
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Long avatarMediaId;
+
   public User(String email, Phone phone, String fullName, String preferredName)
   {
     this.email = email;
@@ -87,12 +96,17 @@ public class User
 
   public User(Long id, String email, Phone phone, String fullName, String preferredName, LocalDateTime created)
   {
-    this(id, email, phone, fullName, preferredName, created, null, 0);
+    this(id, email, phone, fullName, preferredName, created, null, 0, null);
+  }
+
+  public User(Long id, String email, Phone phone, String fullName, String preferredName, LocalDateTime created, Integer avatarVersion, int avatarRevision)
+  {
+    this(id, email, phone, fullName, preferredName, created, avatarVersion, avatarRevision, null);
   }
 
   /** The same user with new details: who they are, when they were created and their avatar stay. */
   public User with(String email, Phone phone, String fullName, String preferredName)
   {
-    return new User(id, email, phone, fullName, preferredName, created, avatarVersion, avatarRevision);
+    return new User(id, email, phone, fullName, preferredName, created, avatarVersion, avatarRevision, avatarMediaId);
   }
 }

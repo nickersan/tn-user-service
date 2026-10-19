@@ -35,4 +35,10 @@ public interface UserRepositoryExtended
 
   /** Records that the user has no avatar. */
   void clearAvatarVersion(long id);
+
+  /** Points the user's avatar at an item in tn-media-service, replacing any it had. */
+  void setAvatarMedia(long id, long mediaId);
+
+  /** Records that the user has no avatar in tn-media-service. */
+  void clearAvatarMedia(long id);
 }
