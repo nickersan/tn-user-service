@@ -30,7 +30,7 @@
     <tn-query-java.version>1.0.0</tn-query-java.version>
     <!-- not a dependency: tn-parent's contracts profile builds on its test-jar -->
     <tn-service.version>2.0.0</tn-service.version>
-    <libphonenumber.version>9.0.41</libphonenumber.version>
+    <libphonenumber.version>9.0.42</libphonenumber.version>
 
   </properties>
 
