@@ -28,13 +28,20 @@
 
     <tn-data-service-jpa.version>2.0.8</tn-data-service-jpa.version>
     <tn-query-java.version>1.0.0</tn-query-java.version>
-    <!-- not a dependency: tn-parent's contracts profile builds on its test-jar -->
-    <tn-service.version>2.0.0</tn-service.version>
+    <!-- also a dependency below, so that this version and not the older one tn-data-service-jpa brings is used; tn-parent's contracts profile builds on its test-jar -->
+    <tn-service.version>2.2.1</tn-service.version>
     <libphonenumber.version>9.0.42</libphonenumber.version>
 
   </properties>
 
   <dependencies>
+
+    <!-- the health checks and the resilience exposure; newer than the version tn-data-service-jpa brings -->
+    <dependency>
+      <groupId>com.tn.service</groupId>
+      <artifactId>tn-service</artifactId>
+      <version>${tn-service.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.tn.query</groupId>
