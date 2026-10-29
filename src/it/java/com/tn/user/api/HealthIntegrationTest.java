@@ -48,9 +48,13 @@ class HealthIntegrationTest extends AbstractPostgresIntegrationTest
   }
 
   @Test
-  void shouldKeepExposingEnv()
+  void shouldExposeOnlyHealthAndResilience()
   {
-    assertEquals(200, testRestTemplate.getForEntity("/actuator/env", String.class).getStatusCode().value());
+    assertEquals("health,resilience", environment.getProperty("management.endpoints.web.exposure.include"));
+    assertEquals(404, testRestTemplate.getForEntity("/actuator/env", String.class).getStatusCode().value());
+    assertEquals(404, testRestTemplate.getForEntity("/actuator/heapdump", String.class).getStatusCode().value());
+    assertEquals(404, testRestTemplate.getForEntity("/actuator/beans", String.class).getStatusCode().value());
+    assertEquals(404, testRestTemplate.getForEntity("/actuator/loggers", String.class).getStatusCode().value());
   }
 
   @Test
