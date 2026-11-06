@@ -22,6 +22,8 @@
   <packaging>jar</packaging>
 
   <properties>
+    <docker-image-repository>tn-user-service</docker-image-repository>
+
 
     <contract-producer.base-class.tests>com.tn.user.AbstractContractTest</contract-producer.base-class.tests>
     <contract-producer.base-package.tests>com.tn.user</contract-producer.base-package.tests>
