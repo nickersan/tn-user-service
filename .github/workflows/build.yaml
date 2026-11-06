@@ -20,6 +20,4 @@ permissions:
 jobs:
   build:
     uses: nickersan/actions/.github/workflows/maven.yaml@main
-    with:
-      container-repository: tn-user-service-container
     secrets: inherit
