@@ -68,7 +68,7 @@ class CorrelatedLinesIntegrationTest extends AbstractPostgresIntegrationTest
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("traceparent", TRACEPARENT);
-    headers.set("baggage", "userId=" + id + ",sessionId=" + sessionId + ",client=" + CLIENT_IN_BAGGAGE);
+    headers.set("baggage", "user.id=" + id + ",session.id=" + sessionId + ",client.name=" + CLIENT_IN_BAGGAGE);
 
     ResponseEntity<User> response = rest.exchange("/v1/users/{id}/avatar-media/{mediaId}", PUT, new HttpEntity<>(headers), User.class, id, MEDIA_ID);
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -88,9 +88,9 @@ class CorrelatedLinesIntegrationTest extends AbstractPostgresIntegrationTest
   private void assertCorrelated(JsonNode line, long userId, String sessionId)
   {
     assertEquals(TRACE_ID, line.path("traceId").asString(), line.toString());
-    assertEquals(String.valueOf(userId), line.path("userId").asString(), line.toString());
-    assertEquals(sessionId, line.path("sessionId").asString(), line.toString());
-    assertEquals(CLIENT, line.path("client").asString(), line.toString());
+    assertEquals(String.valueOf(userId), line.path("user.id").asString(), line.toString());
+    assertEquals(sessionId, line.path("session.id").asString(), line.toString());
+    assertEquals(CLIENT, line.path("client.name").asString(), line.toString());
     assertEquals("tn-user-service", line.path("service.name").asString(), line.toString());
     assertFalse(line.path("service.version").asString().isBlank(), line.toString());
   }
